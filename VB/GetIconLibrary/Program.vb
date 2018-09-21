@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.Drawing
 Imports System.IO
 Imports DevExpress.Images
 Imports DevExpress.Utils.Design
@@ -23,6 +24,7 @@ Namespace GetIconLibrary
             StoreImagesByImageType(filePath, ImageType.Colored)
 
         End Sub
+
         Public Shared Sub StoreImagesByImageType(ByVal filePath As String, ByVal imageType As ImageType)
             For Each imageInfo As ImagesAssemblyImageInfo In ImagesAssemblyImageList.Images
                 Dim stream = ImageResourceCache.Default.GetResourceByFileName(imageInfo.Name, imageType)
@@ -36,5 +38,4 @@ Namespace GetIconLibrary
             Next imageInfo
         End Sub
     End Class
-
 End Namespace
