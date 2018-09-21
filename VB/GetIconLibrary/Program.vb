@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.IO
 Imports DevExpress.Images
+Imports DevExpress.Utils.Design
 
 Namespace GetIconLibrary
 
@@ -19,19 +20,20 @@ Namespace GetIconLibrary
             End If
 
 
-            For Each imageInfo As ImagesAssemblyImageInfo In ImagesAssemblyImageList.Images
-                If imageInfo.Colored Then
-                    Using str As Stream = ImageResourceCache.Default.GetResourceByFileName(imageInfo.Name)
-                        If str IsNot Nothing Then
-                            Using fileStream As FileStream = File.Create(filePath & imageInfo.Name)
-                                str.CopyTo(fileStream)
-                                Console.WriteLine("Writing " & imageInfo.Name)
-                            End Using
-                        End If
-                    End Using
-                End If
-            Next imageInfo
+            StoreImagesByImageType(filePath, ImageType.Colored)
 
+        End Sub
+        Public Shared Sub StoreImagesByImageType(ByVal filePath As String, ByVal imageType As ImageType)
+            For Each imageInfo As ImagesAssemblyImageInfo In ImagesAssemblyImageList.Images
+                Dim stream = ImageResourceCache.Default.GetResourceByFileName(imageInfo.Name, imageType)
+                If stream Is Nothing Then
+                    Continue For
+                End If
+                Using image As Image = System.Drawing.Image.FromStream(stream)
+                    image.Save(filePath & imageInfo.Name)
+                End Using
+                Console.WriteLine("Writing " & imageInfo.Name)
+            Next imageInfo
         End Sub
     End Class
 

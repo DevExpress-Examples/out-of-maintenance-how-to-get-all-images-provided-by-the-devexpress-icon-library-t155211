@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using DevExpress.Images;
+using DevExpress.Utils.Design;
 
 namespace GetIconLibrary {
 
@@ -18,22 +20,21 @@ namespace GetIconLibrary {
                 }
                 finally { }
             }
-            
 
-            foreach (ImagesAssemblyImageInfo imageInfo in ImagesAssemblyImageList.Images) {
-                if (imageInfo.Colored) {
-                    using (Stream str = ImageResourceCache.Default.GetResourceByFileName(imageInfo.Name)) {
-                        if (str != null) {
-                            using (FileStream fileStream = File.Create(filePath + imageInfo.Name)) {
-                                str.CopyTo(fileStream);
-                                Console.WriteLine("Writing " + imageInfo.Name);
-                            }
-                        }
-                    }
-                }
-            }
+
+            StoreImagesByImageType(filePath, ImageType.Colored);
 
         }
-    }
 
+        public static void StoreImagesByImageType(string filePath, ImageType imageType) {
+            foreach (ImagesAssemblyImageInfo imageInfo in ImagesAssemblyImageList.Images) {
+                var stream = ImageResourceCache.Default.GetResourceByFileName(imageInfo.Name, imageType);
+                if (stream == null) continue;
+                using (Image image = Image.FromStream(stream)) {
+                    image.Save(filePath + imageInfo.Name);
+                }
+                Console.WriteLine("Writing " + imageInfo.Name);
+            }
+        }
+    }
 }
